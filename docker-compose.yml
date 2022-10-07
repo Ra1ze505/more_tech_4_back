@@ -1,0 +1,25 @@
+version: "2"
+services:
+  db:
+    image: postgis/postgis:latest
+    environment:
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "habr"
+      POSTGRES_DB: "my_db"
+    ports:
+      - "2009:5432"
+    container_name: "postgres"
+    #volumes:
+    #  - ./db_config_docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+  web:
+    build: .
+    ports:
+      - "2007:2007"
+    depends_on:
+      - "db"
+    command: ["python", "/code/src/main.py"]
+
+networks:
+  default:
+    external:
+      name: managing-couriers-network
