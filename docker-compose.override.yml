@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  app:
+    restart: always
+    volumes:
+      - ./:/app
+
+  db:
+    restart: always
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data:cached
+    ports:
+      - "15432:5432"

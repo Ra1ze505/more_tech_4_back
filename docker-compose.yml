@@ -1,25 +1,28 @@
-version: "2"
+version: "3.8"
 services:
   db:
-    image: postgis/postgis:latest
+    image: postgres:latest
+    hostname: "db"
+    container_name: db
+    restart: always
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data:cached
     environment:
-      POSTGRES_USER: "user"
-      POSTGRES_PASSWORD: "habr"
-      POSTGRES_DB: "my_db"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "more_tech"
     ports:
-      - "2009:5432"
-    container_name: "postgres"
-    #volumes:
-    #  - ./db_config_docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
-  web:
-    build: .
-    ports:
-      - "2007:2007"
-    depends_on:
-      - "db"
-    command: ["python", "/code/src/main.py"]
+      - "15432:5432"
 
-networks:
-  default:
-    external:
-      name: managing-couriers-network
+  app:
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+    restart: always
+    command: uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+    ports:
+      - 8000:8000
+    volumes:
+      - ./:/app
+    depends_on:
+      - db
