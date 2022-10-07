@@ -1,57 +1,51 @@
-import logging
-import sys
-from uvicorn import Config, Server
-from src.core.init_application import application
-from loguru import logger
-from src.core.config import settings
+import time
+from typing import Any
+
+from fastapi import Request, FastAPI
+from fastapi.openapi.models import Response
+from fastapi.responses import JSONResponse
+from starlette.middleware.cors import CORSMiddleware
+
+from src.api.v1.user import user_router
+from src.containers.container import container
 
 
-class InterceptHandler(logging.Handler):
-    def emit(self, record):
-        try:
-            level = logger.level(record.levelname).name
-        except ValueError:
-            level = record.levelno
-
-        frame, depth = logging.currentframe(), 2
-        while frame.f_code.co_filename == logging.__file__:
-            frame = frame.f_back
-            depth += 1
-
-        logger_text = record.getMessage().split(" - ")
-        if len(logger_text) > 1:
-            if logger_text[1] != '"GET /healthcheck HTTP/1.1" 200':
-                logger.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
-        else:
-            logger.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
+def create_app() -> FastAPI:
+    application = FastAPI(
+        title=container.config.app_name(),
+        root_path=container.config.app.root_path(),
+        debug=container.config.app.debug(),
+    )
+    container.gateways.logging_setup.init()  # type: ignore
+    application.include_router(user_router, prefix="/api/v1")
+    application.container = container
+    return application
 
 
+app = create_app()
 
-def setup_logging():
-    logging.root.handlers = [InterceptHandler()]
-    logging.root.setLevel(logging.getLevelName("INFO"))
 
-    for name in logging.root.manager.loggerDict.keys():
-        logging.getLogger(name).handlers = []
-        logging.getLogger(name).propagate = True
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next: Any) -> Response:
+    """Измерение скорости процесса выполнения запроса."""
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = time.time() - start_time
+    response.headers["X-Process-Time"] = str(process_time)
+    return response
 
-    logger.configure(handlers=[{"sink": sys.stdout, "serialize": False}])
+
+@app.on_event("startup")
+async def startup_event() -> None:
+    await app.container.init_resources()  # type: ignore
+
+
+@app.on_event("shutdown")
+async def shutdown_event() -> None:
+    await app.container.shutdown_resources()  # type: ignore
 
 
 if __name__ == "__main__":
-    try:
-        server = Server(
-            Config(app=application,
-                   host=settings.http_server_host,
-                   port=settings.http_server_port,
-                   workers=settings.http_server_workers,
-                   debug=settings.debug,
-                   reload=settings.reload,
-                   )
+    import uvicorn  # type: ignore[import]
 
-        )
-        setup_logging()
-        server.run()
-    except Exception as e:
-        print(e, flush=True)
-        exit(1)
+    uvicorn.run(app=app, host="0.0.0.0", port=8000, log_level="info")

@@ -9,7 +9,8 @@ from sqlmodel import SQLModel
 
 from alembic import context
 
-from src.models.user import User
+from src.data.models.user import User
+from src.data.models.event import Event, UserEvent
 
 
 # this is the Alembic Config object, which provides
