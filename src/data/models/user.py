@@ -12,7 +12,7 @@ class UserRole(str, enum.Enum):
 
 
 class User(SQLModel, table=True):
-    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    id: int = Field(default=None, primary_key=True)
     username: str
     email: str
     full_name: str = None

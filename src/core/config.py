@@ -1,6 +1,6 @@
 import os
 import dotenv
-from pydantic import BaseSettings
+from pydantic import BaseSettings, validator
 
 dotenv.load_dotenv(
     os.path.join(os.path.dirname(__file__), '.env')
@@ -13,47 +13,46 @@ class EnvBaseSettings(BaseSettings):
 
 
 class PostgresConfig(EnvBaseSettings):
+    scheme: str = "postgresql+asyncpg"
     host: str = "localhost"
     port: str = "5432"
     user: str = "postgres"
     password: str = "postgres"
     db: str = "more_tech"
-    url: str = f"postgresql+asyncpg://{user}:{password}@{host}:{port}/{db}"
+    pool_size: int = 10
+    pool_overflow_size: int = 10
+    echo: bool = False
+    autoflush: bool = False
+    autocommit: bool = False
+    expire_on_commit: bool = False
+    engine_health_check_delay: int = 1
+    url: str = ""
 
     class Config:
-        env_prefix = "db_"
+        env_prefix = "postgres_"
+
+    @validator("url", pre=True)
+    def assemble_url(cls, url: str, values: dict) -> str:
+        if not url:
+            url = f"{values['scheme']}://{values['user']}:{values['password']}@{values['host']}:{values['port']}/{values['db']}"
+        return url
+
+
+class LoggingSettings(EnvBaseSettings):
+    serializer: bool = False
+    level: str = "INFO"
+
+    class Config:
+        env_prefix = "logging_"
+
 
 class Settings(EnvBaseSettings):
+    app_name: str = "More Tech"
     http_server_host: str = "localhost"
     http_server_port: int = 8000
     http_server_workers: int = 1
     debug: bool = False
     reload: bool = False
     db: PostgresConfig = PostgresConfig()
+    logging: LoggingSettings = LoggingSettings()
 
-settings = Settings()
-
-
-# class Settings(object):
-#     # Server
-#     HTTP_SERVER_HOST = os.environ.get("HTTP_SERVER_HOST")
-#     HTTP_SERVER_PORT = int(os.environ.get("HTTP_SERVER_PORT"))
-#     COUNT_WORKERS_UVICORN = int(os.environ.get("COUNT_WORKERS_UVICORN", 1))
-#
-#     # PostgreSQL
-#     DB_HOST = os.environ.get("DB_HOST")
-#     DB_PORT = int(os.environ.get("DB_PORT"))
-#     DB_USER = os.environ.get("DB_USER")
-#     DB_PASSWORD = os.environ.get("DB_PASSWORD")
-#     DATABASE = os.environ.get("DATABASE")
-#
-#     DATABASE_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DATABASE}"
-#
-#     # На данный момент отключил за ненадобностью, так как получилось перевести часть логики на запрос к БД.
-#     # Redis
-#     # REDIS_HOST = f"""redis://{os.environ.get("REDIS_HOST")}"""
-#     # REDIS_PORT = int(os.environ.get("REDIS_PORT"))
-#     # REDIS_ZONE_INFO_DB = int(os.environ.get("REDIS_ZONE_INFO_DB"))
-# #
-#     # Redis cache
-#     # CACHE_ZONE_KEY = os.environ.get("CACHE_ZONE_KEY")

@@ -2,7 +2,7 @@ from datetime import datetime, time, date
 
 from sqlmodel import SQLModel, Field, Column, Enum, Relationship
 
-from src.models.user import User
+from src.data.models.user import User
 
 
 class UserEvent(SQLModel, table=True):
