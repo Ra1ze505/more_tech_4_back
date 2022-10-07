@@ -12,6 +12,7 @@ class Container(containers.DeclarativeContainer):
     config = providers.Configuration(pydantic_settings=[app_config])
     gateways = providers.Container(Gateways, config=config)
     repos = providers.Container(ReposContainer, config=config, gateways=gateways)
-    use_cases = providers.Container(UseCasesContainer, repos=repos, config=config)
+    use_cases = providers.Container(UseCasesContainer, repos=repos)
+
 
 container = Container()

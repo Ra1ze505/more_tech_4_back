@@ -1,5 +1,6 @@
 import os
 import dotenv
+from datetime import timedelta
 from pydantic import BaseSettings, validator
 
 dotenv.load_dotenv(
@@ -46,6 +47,14 @@ class LoggingSettings(EnvBaseSettings):
         env_prefix = "logging_"
 
 
+class AuthSettings(EnvBaseSettings):
+    secret_key: str = "secret"
+    algorithm: str = "HS256"
+    access_token_expire_minutes: int = 30
+
+    class Config:
+        env_prefix = "auth_"
+
 
 class Settings(EnvBaseSettings):
     app_name: str = "More Tech"
@@ -56,6 +65,7 @@ class Settings(EnvBaseSettings):
     reload: bool = False
     db: PostgresConfig = PostgresConfig()
     logging: LoggingSettings = LoggingSettings()
+    auth: AuthSettings = AuthSettings()
 
 
 
