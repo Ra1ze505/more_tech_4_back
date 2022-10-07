@@ -17,7 +17,7 @@ class PostgresConfig(EnvBaseSettings):
     port: str = "5432"
     user: str = "postgres"
     password: str = "postgres"
-    db: str = "postgres"
+    db: str = "more_tech"
     url: str = f"postgresql+asyncpg://{user}:{password}@{host}:{port}/{db}"
 
     class Config:

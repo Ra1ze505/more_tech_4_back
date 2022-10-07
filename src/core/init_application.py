@@ -11,4 +11,5 @@ application.include_router(route_hello)
 
 @application.on_event("startup")
 async def on_startup():
-    await init_db()
+    ...
+    # await init_db()
