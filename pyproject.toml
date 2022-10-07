@@ -57,6 +57,10 @@ sqlmodel = "~0.0.6"
 starlette = "~0.17.1"
 typing_extensions = "~4.2.0"
 uvicorn = "~0.15.0"
+python-jose = "^3.3.0"
+passlib = "^1.7.4"
+python-multipart = "^0.0.5"
+bcrypt = "^4.0.0"
 
 
 
