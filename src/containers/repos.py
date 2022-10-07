@@ -1,5 +1,7 @@
 from dependency_injector import containers, providers
 
+from src.data.repos.polygon.transfer import TransferApiRepo
+from src.data.repos.polygon.wallet import WalletApiRepo
 from src.data.repos.user import UserRepo, UserAuthRepo
 
 
@@ -15,6 +17,17 @@ class ReposContainer(containers.DeclarativeContainer):
         UserAuthRepo,
         db=gateways.db,
         config=config.auth,
+    )
+
+    wallet_repo = providers.Factory(
+        WalletApiRepo,
+        http_client=gateways.http_client,
+        config=config.polygon,
+    )
+    transfer_repo = providers.Factory(
+        TransferApiRepo,
+        http_client=gateways.http_client,
+        config=config.polygon,
     )
 
 

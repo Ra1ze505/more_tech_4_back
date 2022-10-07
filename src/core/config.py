@@ -56,6 +56,13 @@ class AuthSettings(EnvBaseSettings):
         env_prefix = "auth_"
 
 
+class PolygonSettings(EnvBaseSettings):
+    public_key: str = ""
+    private_key: str = ""
+
+    class Config:
+        env_prefix = "polygon_"
+
 class Settings(EnvBaseSettings):
     app_name: str = "More Tech"
     http_server_host: str = "localhost"
@@ -66,6 +73,7 @@ class Settings(EnvBaseSettings):
     db: PostgresConfig = PostgresConfig()
     logging: LoggingSettings = LoggingSettings()
     auth: AuthSettings = AuthSettings()
+    polygon: PolygonSettings = PolygonSettings()
 
 
 
