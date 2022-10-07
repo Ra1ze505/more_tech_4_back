@@ -1,5 +1,6 @@
 from dependency_injector import containers, providers
 
+from src.data.repos.polygon.nft import NftApiRepo
 from src.data.repos.polygon.transfer import TransferApiRepo
 from src.data.repos.polygon.wallet import WalletApiRepo
 from src.data.repos.user import UserRepo, UserAuthRepo
@@ -26,6 +27,11 @@ class ReposContainer(containers.DeclarativeContainer):
     )
     transfer_repo = providers.Factory(
         TransferApiRepo,
+        http_client=gateways.http_client,
+        config=config.polygon,
+    )
+    nft_repo = providers.Factory(
+        NftApiRepo,
         http_client=gateways.http_client,
         config=config.polygon,
     )
