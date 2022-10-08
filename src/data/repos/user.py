@@ -15,12 +15,7 @@ class BaseUserRepo(BaseRepo):
     model = User
     query = select(User)
     schema = UserBaseSchema
-
-    async def get_all(self):
-        return (await self.session.execute(select(User))).scalars().all()
-
-    async def get_one(self, obj_id: int):
-        return (await self.session.execute(select(User).where(User.id == obj_id))).scalars().one()
+    out_schema = UserBaseSchema
 
     async def get_user_by_username(self, username: str) -> UserBaseSchema:
         stmt = select(User).where(User.username == username)

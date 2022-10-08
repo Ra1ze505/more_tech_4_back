@@ -1,5 +1,7 @@
 from dependency_injector import containers, providers
 
+from src.data.repos.marketplace.admin_item import AdminItemRepo
+from src.data.repos.marketplace.event import EventRepo
 from src.data.repos.polygon.nft import NftApiRepo
 from src.data.repos.polygon.transfer import TransferApiRepo
 from src.data.repos.polygon.wallet import WalletApiRepo
@@ -19,6 +21,13 @@ class ReposContainer(containers.DeclarativeContainer):
         db=gateways.db,
         config=config.auth,
     )
+
+    admin_item_repo = providers.Factory(
+        AdminItemRepo,
+        db=gateways.db,
+    )
+
+    event_repo = providers.Factory(EventRepo, db=gateways.db)
 
     wallet_repo = providers.Factory(
         WalletApiRepo,

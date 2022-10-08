@@ -3,9 +3,8 @@ from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.openapi.models import Response
-from fastapi.responses import JSONResponse
-from starlette.middleware.cors import CORSMiddleware
 
+from src.api.v1.router.marketplace import marketplace_router
 from src.api.v1.router.user import user_router
 from src.containers.container import container
 
@@ -18,6 +17,7 @@ def create_app() -> FastAPI:
     )
     container.gateways.logging_setup.init()  # type: ignore
     application.include_router(user_router, prefix="/api/v1")
+    application.include_router(marketplace_router, prefix="/api/v1")
     application.container = container
     return application
 

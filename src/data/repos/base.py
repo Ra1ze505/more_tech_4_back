@@ -1,4 +1,5 @@
 import copy
+from typing import Any
 
 from fastapi import HTTPException
 from pydantic import BaseModel, parse_obj_as
@@ -17,6 +18,7 @@ class BaseRepo:
     model: SQLModel
     query: Select
     schema: BaseModel
+    out_schema: BaseModel
 
     def __init__(self, db: Database):
         self.db = db
@@ -33,7 +35,7 @@ class BaseRepo:
         q = self.get_query()
         return (await self.session.execute(q)).scalars().all()
 
-    async def get_one(self, field_name: str, field_value: str):
+    async def get_one(self, field_name: str, field_value: Any):
         q = self.get_query().where(getattr(self.model, field_name) == field_value)
         return (await self.session.execute(q)).scalars().one()
 
@@ -49,7 +51,7 @@ class BaseRepo:
             )
         q = select(self.model).where(self.model.id == obj.id)
         obj = (await self.session.execute(q)).scalars().one()
-        return parse_obj_as(self.schema, obj)
+        return parse_obj_as(self.out_schema, obj)
 
     async def update(self, data: dict):
         q = select(self.model).where(self.model.id == data.get("id"))
@@ -62,4 +64,4 @@ class BaseRepo:
         self.session.add(obj)
         await self.session.commit()
 
-        return parse_obj_as(self.model, obj)
+        return parse_obj_as(self.out_schema, obj)
