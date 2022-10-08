@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from passlib.context import CryptContext
 
+from src.data.repos.polygon.wallet import WalletApiRepo
 from src.data.repos.user import UserRepo, UserAuthRepo
 from src.domain.user.dto.base import UserBaseSchema, UserCreateSchema, Token
 
@@ -17,14 +18,24 @@ class UserUseCase:
 
 class UserAuthUseCase:
 
-    def __init__(self, user_repo: UserRepo, user_auth_repo: UserAuthRepo):
+    def __init__(
+            self,
+            user_repo: UserRepo,
+            user_auth_repo: UserAuthRepo,
+            wallet_repo: WalletApiRepo
+    ) -> None:
         self.user_repo = user_repo
         self.user_auth_repo = user_auth_repo
+        self.wallet_repo = wallet_repo
         self.pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-    async def register(self, user: UserCreateSchema):
+    async def register(self, user: UserCreateSchema) -> UserBaseSchema:
         user.password = self.get_password_hash(user.password)
-        return await self.user_auth_repo.create(data=user.dict())
+        created_user = await self.user_auth_repo.create(data=user.dict())
+        wallet = await self.wallet_repo.new()
+        created_user.public_id = wallet.public_key
+        created_user.private_id = wallet.private_key
+        return await self.user_auth_repo.update(created_user.dict())
 
     def verify_password(self, plain_password, hashed_password):
         return self.pwd_context.verify(plain_password, hashed_password)

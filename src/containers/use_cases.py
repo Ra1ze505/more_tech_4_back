@@ -14,5 +14,6 @@ class UseCasesContainer(containers.DeclarativeContainer):
         UserAuthUseCase,
         user_repo=repos.user_repo,
         user_auth_repo=repos.user_auth_repo,
+        wallet_repo=repos.wallet_repo,
     )
 

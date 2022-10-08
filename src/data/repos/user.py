@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from jose import jwt, JWTError
 from pydantic import parse_obj_as
 from sqlalchemy import select
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, NoResultFound
 from starlette import status
 
 from src.data.models.user.user import User
@@ -40,7 +40,22 @@ class UserAuthRepo(BaseUserRepo):
             await self.session.rollback()
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail="User already exists")
-        return user
+        q = select(User).where(User.id == user.id)
+        user = (await self.session.execute(q)).scalars().one()
+        return parse_obj_as(UserBaseSchema, user)
+
+    async def update(self, data: dict):
+        q = select(User).where(User.id == data.get("id"))
+        result = await self.session.execute(q)
+        obj = result.unique().scalars().one()
+
+        for key, val in data.items():
+            setattr(obj, key, val)
+
+        self.session.add(obj)
+        await self.session.commit()
+
+        return parse_obj_as(UserBaseSchema, obj)
 
     def create_token(self, data: dict) -> str:
         to_encode = data.copy()

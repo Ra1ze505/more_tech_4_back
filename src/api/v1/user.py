@@ -20,7 +20,7 @@ async def get_all(
 async def register(
     user: UserCreateSchema,
 ):
-    service: UserAuthUseCase = container.use_cases.user_auth()
+    service: UserAuthUseCase = await container.use_cases.user_auth()
     return await service.register(user)
 
 
