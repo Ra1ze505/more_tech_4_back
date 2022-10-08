@@ -49,32 +49,6 @@ class UserAuthRepo(BaseUserRepo):
         super().__init__(db)
         self.config = config
 
-    async def create(self, data: dict):
-        user = User(**data)
-        self.session.add(user)
-        try:
-            await self.session.commit()
-        except IntegrityError:
-            await self.session.rollback()
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                                detail="User already exists")
-        q = select(User).where(User.id == user.id)
-        user = (await self.session.execute(q)).scalars().one()
-        return parse_obj_as(UserBaseSchema, user)
-
-    async def update(self, data: dict):
-        q = select(User).where(User.id == data.get("id"))
-        result = await self.session.execute(q)
-        obj = result.unique().scalars().one()
-
-        for key, val in data.items():
-            setattr(obj, key, val)
-
-        self.session.add(obj)
-        await self.session.commit()
-
-        return parse_obj_as(UserBaseSchema, obj)
-
     def create_token(self, data: dict) -> str:
         to_encode = data.copy()
         token_type = to_encode.get("type")
