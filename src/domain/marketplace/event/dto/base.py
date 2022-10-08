@@ -36,13 +36,9 @@ class EventInSchema(BaseModel):
     repeat: bool | None = None
     is_active: bool | None = None
     creator_id: int | None = None
-    creator: int | None = None
-    users: list[int] | None = None
     base_price: int | None = None
     price: int | None = None
-    created_at: datetime | None = None
-    updated_at: datetime | None = None
 
 
-class EventOutSchema(EventBaseSchema):
+class EventOutSchema(EventInSchema):
     id: int

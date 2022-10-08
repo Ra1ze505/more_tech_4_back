@@ -44,4 +44,5 @@ async def get_event(item_id: int) -> EventBaseSchema:
 async def create_event(item: EventInSchema):
     service: EventUseCase = container.use_cases.event()
     get_user: UserUseCase = container.use_cases.user()
+
     return await service.create(data=item.dict())

@@ -23,5 +23,5 @@ class Event(SQLModel, table=True):
     users: list[User] = Relationship(back_populates="events", link_model=UserEvent)
     base_price: int = Field(default=0)
     price: int = Field(default=0)
-    created_at: datetime = Field(default=None)
-    updated_at: datetime = Field(default=None)
+    created_at: datetime = Field(default_factory=datetime.now)
+    updated_at: datetime = Field(default_factory=datetime.now)
