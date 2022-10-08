@@ -10,8 +10,8 @@ class CheckStatusUseCase:
     async def __call__(self):
         transactions = await self.transaction_repo.get_for_check_status()
         for transaction in transactions:
+            print(transaction)
             status = await self.transfer_repo.transfer_status(transaction.transaction_hash)
-            if status.get("status") == "Success":
-                await self.transaction_repo.update(
-                    {"id": transaction.id, "transaction_status": "Success"}
-                )
+            await self.transaction_repo.update(
+                {"id": transaction.id, "transaction_status": status.get("status")}
+            )
