@@ -1,7 +1,7 @@
 import copy
 
 from fastapi import HTTPException
-from pydantic import parse_obj_as, BaseModel
+from pydantic import BaseModel, parse_obj_as
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -44,8 +44,9 @@ class BaseRepo:
             await self.session.commit()
         except IntegrityError:
             await self.session.rollback()
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                                detail="Object already exists")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Object already exists"
+            )
         q = select(self.model).where(self.model.id == obj.id)
         obj = (await self.session.execute(q)).scalars().one()
         return parse_obj_as(self.schema, obj)
@@ -62,5 +63,3 @@ class BaseRepo:
         await self.session.commit()
 
         return parse_obj_as(self.model, obj)
-
-

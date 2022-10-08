@@ -47,4 +47,6 @@ class TokenData(BaseModel):
     role: UserRole | None = None
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/user/token", )
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl="api/v1/user/token",
+)

@@ -1,7 +1,7 @@
 import time
 from typing import Any
 
-from fastapi import Request, FastAPI
+from fastapi import FastAPI, Request
 from fastapi.openapi.models import Response
 from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware

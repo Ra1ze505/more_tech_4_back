@@ -1,10 +1,9 @@
 from functools import wraps
-from typing import Callable, Any
+from typing import Any, Callable
 
 import anyio
-from loguru import logger
-
 import typer
+from loguru import logger
 
 from src.containers.container import container
 from src.data.repos.polygon.transfer import TransferApiRepo
@@ -35,6 +34,7 @@ async def on_startup() -> None:
 @run_async
 async def test(self) -> None:
     from rich import print
+
     await on_startup()
     wallet_repo: WalletApiRepo = await container.repos.wallet_repo()
     transfer_repo: TransferApiRepo = await container.repos.transfer_repo()
@@ -44,20 +44,18 @@ async def test(self) -> None:
     # print(await wallet_repo.balance(wallet.public_key))
     # print(await wallet_repo.balance_nft(wallet.public_key))
     # print(await wallet_repo.history(wallet.public_key))
-    print(await wallet_repo.balance(conf.get('public_key')))
+    print(await wallet_repo.balance(conf.get("public_key")))
     # print(await wallet_repo.balance_nft(conf.get('public_key')))
     #
     # print(await wallet_repo.history(conf.get('public_key')))
 
     # print(conf)
     try:
-        res = await transfer_repo.transfer_ruble(conf.get('private_key'), wallet_2.public_key, 0.1)
+        res = await transfer_repo.transfer_ruble(conf.get("private_key"), wallet_2.public_key, 0.1)
         print(res)
     except PolygonException as e:
         print(e)
 
 
-
 if __name__ == "__main__":
     app()
-

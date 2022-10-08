@@ -1,7 +1,8 @@
 from __future__ import annotations
-from datetime import datetime, time, date
 
-from sqlmodel import SQLModel, Field, Relationship
+from datetime import date, datetime, time
+
+from sqlmodel import Field, Relationship, SQLModel
 
 from src.data.models.user import User
 from src.data.models.user_event import UserEvent

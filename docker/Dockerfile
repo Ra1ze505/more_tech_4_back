@@ -24,5 +24,3 @@ RUN poetry install
 COPY docker/entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
 COPY / /app/
-
-

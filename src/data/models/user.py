@@ -1,10 +1,13 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
-from datetime import datetime
-import enum
 
-from sqlmodel import SQLModel, Field, Enum, Column, Relationship
+import enum
+from datetime import datetime
+from typing import TYPE_CHECKING
+
+from sqlmodel import Column, Enum, Field, Relationship, SQLModel
+
 from src.data.models.user_event import UserEvent
+
 if TYPE_CHECKING:
     from src.data.models.marketplace.event import Event
 

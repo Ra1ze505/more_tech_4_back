@@ -1,6 +1,6 @@
 import enum
 
-from sqlmodel import SQLModel, Field, Enum, Column
+from sqlmodel import Column, Enum, Field, SQLModel
 
 
 class ItemType(str, enum.Enum):

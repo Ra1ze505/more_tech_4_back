@@ -1,11 +1,10 @@
 import os
-import dotenv
 from datetime import timedelta
+
+import dotenv
 from pydantic import BaseSettings, validator
 
-dotenv.load_dotenv(
-    os.path.join(os.path.dirname(__file__), '../../.env')
-)
+dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), "../../.env"))
 
 
 class EnvBaseSettings(BaseSettings):
@@ -76,6 +75,3 @@ class Settings(EnvBaseSettings):
     logging: LoggingSettings = LoggingSettings()
     auth: AuthSettings = AuthSettings()
     polygon: PolygonSettings = PolygonSettings()
-
-
-
