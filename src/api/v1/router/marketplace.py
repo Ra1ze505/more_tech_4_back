@@ -3,8 +3,9 @@ from fastapi import APIRouter
 from src.containers.container import container
 from src.domain.marketplace.admin_item.dto.base import AdminItemBaseSchema
 from src.domain.marketplace.admin_item.use_case import AdminItemUseCase
-from src.domain.marketplace.event.dto.base import EventBaseSchema
+from src.domain.marketplace.event.dto.base import EventBaseSchema, EventInSchema
 from src.domain.marketplace.event.use_case import EventUseCase
+from src.domain.user.use_cases import UserUseCase
 
 marketplace_router = APIRouter(prefix="/marketplace", tags=["marketplace"])
 
@@ -40,6 +41,7 @@ async def get_event(item_id: int) -> EventBaseSchema:
 
 
 @marketplace_router.post("/event")
-async def create_event(item: EventBaseSchema):
+async def create_event(item: EventInSchema):
     service: EventUseCase = container.use_cases.event()
+    get_user: UserUseCase = container.use_cases.user()
     return await service.create(data=item.dict())

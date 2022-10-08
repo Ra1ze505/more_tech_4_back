@@ -19,6 +19,7 @@ class BaseRepo:
     query: Select
     schema: BaseModel
     out_schema: BaseModel
+    in_schema: BaseModel
 
     def __init__(self, db: Database):
         self.db = db

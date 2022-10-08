@@ -11,7 +11,7 @@ class UseCasesContainer(containers.DeclarativeContainer):
 
     user = providers.Factory(
         UserUseCase,
-        user_repo=repos.user_repo,
+        repo=repos.user_repo,
     )
     admin_item = providers.Factory(AdminItemUseCase, repo=repos.admin_item_repo)
     event = providers.Factory(EventUseCase, repo=repos.event_repo)
