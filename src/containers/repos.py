@@ -3,7 +3,7 @@ from dependency_injector import containers, providers
 from src.data.repos.polygon.nft import NftApiRepo
 from src.data.repos.polygon.transfer import TransferApiRepo
 from src.data.repos.polygon.wallet import WalletApiRepo
-from src.data.repos.user import UserRepo, UserAuthRepo
+from src.data.repos.user.user import UserRepo, UserAuthRepo
 
 
 class ReposContainer(containers.DeclarativeContainer):

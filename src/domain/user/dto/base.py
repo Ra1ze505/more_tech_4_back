@@ -29,6 +29,10 @@ class UserCreateSchema(BaseModel):
     position: str
     balance: int
     is_active: bool
+    user_role: str = "user"
+    public_id: str
+    private_id: str
+    events: list = []
 
 
 class Token(BaseModel):
