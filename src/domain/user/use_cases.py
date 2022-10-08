@@ -1,16 +1,21 @@
 from passlib.context import CryptContext
 
-from src.data.repos.user.user import UserRepo, UserAuthRepo
+from src.data.repos.user import UserRepo, UserAuthRepo
+from src.domain.base.base_use_case import BaseUseCase
 from src.domain.user.dto.base import UserBaseSchema, UserCreateSchema, Token
 
 
-class UserUseCase:
+class UserUseCase(BaseUseCase):
 
     def __init__(self, repo: UserRepo):
         self.repo = repo
 
+    async def get_one(self, obj_id: int):
+        return await self.repo.get_user(user_id=obj_id)
+
     async def get_all(self):
         return await self.repo.get_all()
+
 
 
 class UserAuthUseCase:

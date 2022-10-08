@@ -3,7 +3,7 @@ from datetime import datetime
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
 
-from src.data.models.user.user import UserRole
+from src.data.models.user import UserRole
 
 
 class UserBaseSchema(BaseModel):

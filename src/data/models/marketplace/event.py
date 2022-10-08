@@ -1,15 +1,14 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 from datetime import datetime, time, date
 
 from sqlmodel import SQLModel, Field, Relationship
 
-from src.data.models import User
-from src.data.models.user.user_event import UserEvent
+from src.data.models.user import User
+from src.data.models.user_event import UserEvent
 
 
 class Event(SQLModel, table=True):
-    id: int = Field( primary_key=True)
+    id: int = Field(primary_key=True)
     name: str = Field(default=None)
     description: str = Field(default=None)
     start_date: date

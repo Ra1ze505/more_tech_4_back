@@ -4,9 +4,9 @@ from datetime import datetime
 import enum
 
 from sqlmodel import SQLModel, Field, Enum, Column, Relationship
-from src.data.models.user.user_event import UserEvent
+from src.data.models.user_event import UserEvent
 if TYPE_CHECKING:
-    from src.data.models.user.event import Event
+    from src.data.models.marketplace.event import Event
 
 
 class UserRole(str, enum.Enum):

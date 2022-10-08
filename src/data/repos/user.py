@@ -7,12 +7,24 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from starlette import status
 
-from src.data.models.user.user import User
+from src.data.models.user import User
 from src.data.repos.base import BaseRepo
-from src.domain.user.dto.base import UserBaseSchema, TokenData, UserCreateSchema
+from src.domain.user.dto.base import UserBaseSchema, TokenData
 
 
 class BaseUserRepo(BaseRepo):
+
+    async def get_all(self):
+        return (await self.session.execute(select(User))).scalars().all()
+
+    async def get_one(self, obj_id: int):
+        return (
+            await self.session.execute(
+                select(User).where(
+                    User.id == obj_id
+                )
+            )
+        ).scalars().one()
 
     async def get_user_by_username(self, username: str) -> UserBaseSchema:
         stmt = select(User).where(User.username == username)
@@ -21,8 +33,7 @@ class BaseUserRepo(BaseRepo):
 
 
 class UserRepo(BaseUserRepo):
-    async def get_all(self):
-        return (await self.session.execute(select(User))).scalars().all()
+    ...
 
 
 class UserAuthRepo(BaseUserRepo):

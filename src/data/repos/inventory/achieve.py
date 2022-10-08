@@ -1,7 +1,7 @@
 from pydantic import parse_obj_as
 from sqlalchemy import select
 
-from src.data.models.user.user import User
+from src.data.models.user import User
 from src.data.repos.base import BaseRepo
 from src.domain.user.dto.base import UserBaseSchema
 
