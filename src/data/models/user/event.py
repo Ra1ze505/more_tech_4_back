@@ -1,16 +1,12 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from datetime import datetime, time, date
 
-from sqlmodel import SQLModel, Field, Column, Enum, Relationship
+from sqlmodel import SQLModel, Field, Relationship
+from src.data.models.user.user_event import UserEvent
 
-from src.data.models.user import User
-
-
-class UserEvent(SQLModel, table=True):
-    id: int = Field(default=None, primary_key=True)
-    user_id: int = Field(foreign_key="user.id")
-    event_id: int = Field(foreign_key="event.id")
-    created_at: datetime = Field(default=None)
-    updated_at: datetime = Field(default=None)
+if TYPE_CHECKING:
+    from src.data.models.user.user import User
 
 
 class Event(SQLModel, table=True):
@@ -30,5 +26,3 @@ class Event(SQLModel, table=True):
     price: int = Field(default=0)
     created_at: datetime = Field(default=None)
     updated_at: datetime = Field(default=None)
-
-
