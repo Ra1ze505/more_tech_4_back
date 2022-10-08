@@ -9,6 +9,7 @@ from src.data.models.user import UserRole
 class UserBaseSchema(BaseModel):
     id: int
     username: str
+    password: str
     email: str
     position: str
     balance: int
