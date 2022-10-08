@@ -3,10 +3,9 @@ from typing import TYPE_CHECKING
 from datetime import datetime, time, date
 
 from sqlmodel import SQLModel, Field, Relationship
-from src.data.models.user.user_event import UserEvent
 
-if TYPE_CHECKING:
-    from src.data.models.user.user import User
+from src.data.models import User
+from src.data.models.user.user_event import UserEvent
 
 
 class Event(SQLModel, table=True):

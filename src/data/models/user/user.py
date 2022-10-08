@@ -16,7 +16,7 @@ class UserRole(str, enum.Enum):
 
 
 class User(SQLModel, table=True):
-    id: int = Field( primary_key=True)
+    id: int = Field(primary_key=True)
     username: str
     email: str
     full_name: str = None
@@ -28,5 +28,6 @@ class User(SQLModel, table=True):
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
     events: list["Event"] = Relationship(back_populates="users", link_model=UserEvent)
-    private_id: str
-    public_id: str
+    created_events: list["Event"] = Relationship(back_populates="creator")
+    private_id: str | None
+    public_id: str | None
