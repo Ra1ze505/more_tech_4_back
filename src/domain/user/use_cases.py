@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from passlib.context import CryptContext
 
 from src.data.repos.user import UserRepo, UserAuthRepo
-from src.domain.user.dto.base import UserBaseSchema, UserCreateSchema
+from src.domain.user.dto.base import UserBaseSchema, UserCreateSchema, Token
 
 
 class UserUseCase:
@@ -40,8 +40,22 @@ class UserAuthUseCase:
             return False
         return user
 
-    def create_access_token(self, data: dict):
-        return self.user_auth_repo.create_access_token(data=data)
+    def create_token(self, data: dict) -> str:
+        return self.user_auth_repo.create_token(data=data)
+
+    def create_access_refresh_token(self, user):
+        access_token = self.create_token(
+            data={"sub": user.username,
+                  "role": user.role,
+                  "type": "access"}
+        )
+
+        refresh_token = self.create_token(
+            data={"sub": user.username,
+                  'role': user.role,
+                  "type": "refresh"}
+        )
+        return Token(access_token=access_token, refresh_token=refresh_token, token_type='bearer',)
 
     async def get_current_user(self, token: str) -> UserBaseSchema:
         return await self.user_auth_repo.get_current_user(token=token)
@@ -50,9 +64,13 @@ class UserAuthUseCase:
         user = await self.authenticate_user(username, password)
         if not user:
             return False
-        access_token_expires = timedelta(minutes=15)
-        access_token = self.create_access_token(
-            data={"sub": user.username, "exp": datetime.utcnow() + access_token_expires}
-        )
-        return access_token
+        return self.create_access_refresh_token(user)
+
+    async def refresh_token(self, token: str):
+        user = await self.user_auth_repo.refresh_token(token=token)
+        if not user:
+            return False
+        return self.create_access_refresh_token(user)
+
+
 

@@ -29,8 +29,15 @@ async def login_for_access_token(
     user: OAuth2PasswordRequestForm = Depends(),
 ):
     service: UserAuthUseCase = container.use_cases.user_auth()
-    token = await service.login_for_access_token(user.username, user.password)
-    return Token(access_token=token, token_type="bearer")
+    return await service.login_for_access_token(user.username, user.password)
+
+
+@user_router.post("/token/refresh", response_model=Token)
+async def refresh_token(
+    token: str
+):
+    service: UserAuthUseCase = container.use_cases.user_auth()
+    return await service.refresh_token(token)
 
 
 @user_router.get("/me")

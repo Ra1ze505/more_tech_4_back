@@ -36,13 +36,15 @@ class UserAuthRepo(BaseUserRepo):
         await self.session.commit()
         return user
 
-    def create_access_token(self, data: dict):
+    def create_token(self, data: dict) -> str:
         to_encode = data.copy()
-        expires_delta = timedelta(minutes=self.config.get('access_token_expire_minutes'))
-        if expires_delta:
-            expire = datetime.utcnow() + expires_delta
+        token_type = to_encode.get("type")
+        if token_type == "access":
+            expires_delta = timedelta(minutes=self.config.get('access_token_expire_minutes'))
         else:
-            expire = datetime.utcnow() + timedelta(minutes=15)
+            expires_delta = timedelta(days=self.config.get('refresh_token_expire_days'))
+
+        expire = datetime.utcnow() + expires_delta
         to_encode.update({"exp": expire})
         encoded_jwt = jwt.encode(to_encode, self.config.get('secret_key'),
                                  algorithm=self.config.get('algorithm'))
@@ -58,7 +60,31 @@ class UserAuthRepo(BaseUserRepo):
             payload = jwt.decode(token, self.config.get('secret_key'),
                                  algorithms=[self.config.get('algorithm')])
             username: str = payload.get("sub")
-            if username is None:
+            token_type: str = payload.get("type")
+            exp: datetime = payload.get("exp")
+            if username is None or token_type != "access" or exp < datetime.utcnow().timestamp():
+                raise credentials_exception
+            token_data = TokenData(username=username)
+        except JWTError:
+            raise credentials_exception
+        user = await self.get_user_by_username(username=token_data.username)
+        if user is None:
+            raise credentials_exception
+        return user
+
+    async def refresh_token(self, token: str):
+        credentials_exception = HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+        try:
+            payload = jwt.decode(token, self.config.get('secret_key'),
+                                 algorithms=[self.config.get('algorithm')])
+            username: str = payload.get("sub")
+            token_type: str = payload.get("type")
+            exp: datetime = payload.get("exp")
+            if username is None or token_type != "refresh" or exp < datetime.utcnow().timestamp():
                 raise credentials_exception
             token_data = TokenData(username=username)
         except JWTError:
