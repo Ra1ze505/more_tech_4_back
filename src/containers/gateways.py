@@ -1,18 +1,18 @@
 import logging
 import sys
+from typing import AsyncGenerator
 
+import httpx
 import loguru
 from dependency_injector import containers, providers
 from httpx import AsyncClient
 
-from typing import AsyncGenerator
-
-import httpx
-
 from src.data.db.db import Database
 
 
-async def init_async_http_client(base_url: str) -> AsyncGenerator[httpx.AsyncClient, None]:
+async def init_async_http_client(
+    base_url: str,
+) -> AsyncGenerator[httpx.AsyncClient, None]:
     """Инициализация асинхронного http-клиента"""
     async with httpx.AsyncClient(base_url=base_url) as client:
         yield client
@@ -37,7 +37,7 @@ def setup_logging(config: dict) -> None:
     """Очистка логгера и обнуление корневого хендлера для stdout и stderr"""
     loguru.logger.remove()
     logging.root.handlers = []
-    logging.root.setLevel(config['level'])
+    logging.root.setLevel(config["level"])
     for name in logging.root.manager.loggerDict.keys():
         """Очистка хендлеров для каждой либы(при их наличии) и определение кастомного хендлера"""
         if logging.getLogger(name).hasHandlers():

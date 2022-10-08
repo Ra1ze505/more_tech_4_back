@@ -1,13 +1,12 @@
 from passlib.context import CryptContext
 
 from src.data.repos.polygon.wallet import WalletApiRepo
-from src.data.repos.user import UserRepo, UserAuthRepo
+from src.data.repos.user import UserAuthRepo, UserRepo
 from src.domain.base.base_use_case import BaseUseCase
-from src.domain.user.dto.base import UserBaseSchema, UserCreateSchema, Token
+from src.domain.user.dto.base import Token, UserBaseSchema, UserCreateSchema
 
 
 class UserUseCase(BaseUseCase):
-
     def __init__(self, repo: UserRepo):
         self.repo = repo
 
@@ -18,14 +17,12 @@ class UserUseCase(BaseUseCase):
         return await self.repo.get_all()
 
 
-
 class UserAuthUseCase:
-
     def __init__(
-            self,
-            user_repo: UserRepo,
-            user_auth_repo: UserAuthRepo,
-            wallet_repo: WalletApiRepo
+        self,
+        user_repo: UserRepo,
+        user_auth_repo: UserAuthRepo,
+        wallet_repo: WalletApiRepo,
     ) -> None:
         self.user_repo = user_repo
         self.user_auth_repo = user_auth_repo
@@ -59,17 +56,17 @@ class UserAuthUseCase:
 
     def create_access_refresh_token(self, user):
         access_token = self.create_token(
-            data={"sub": user.username,
-                  "role": user.role,
-                  "type": "access"}
+            data={"sub": user.username, "role": user.role, "type": "access"}
         )
 
         refresh_token = self.create_token(
-            data={"sub": user.username,
-                  'role': user.role,
-                  "type": "refresh"}
+            data={"sub": user.username, "role": user.role, "type": "refresh"}
         )
-        return Token(access_token=access_token, refresh_token=refresh_token, token_type='bearer',)
+        return Token(
+            access_token=access_token,
+            refresh_token=refresh_token,
+            token_type="bearer",
+        )
 
     async def get_current_user(self, token: str) -> UserBaseSchema:
         return await self.user_auth_repo.get_current_user(token=token)
@@ -85,6 +82,3 @@ class UserAuthUseCase:
         if not user:
             return False
         return self.create_access_refresh_token(user)
-
-
-

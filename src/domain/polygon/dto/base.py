@@ -21,13 +21,13 @@ class HistoryItemSchema(BaseModel):
 
 
 class WalletCreatedSchema(BaseModel):
-    public_key: str = Field(..., alias='publicKey')
-    private_key: str = Field(..., alias='privateKey')
+    public_key: str = Field(..., alias="publicKey")
+    private_key: str = Field(..., alias="privateKey")
 
 
 class WalletBalanceSchema(BaseModel):
-    matic_amount: float = Field(..., alias='maticAmount')
-    coins_amount: float = Field(..., alias='coinsAmount')
+    matic_amount: float = Field(..., alias="maticAmount")
+    coins_amount: float = Field(..., alias="coinsAmount")
 
 
 class WalletBalanceNftSchema(BaseModel):
@@ -39,9 +39,9 @@ class WalletHistorySchema(BaseModel):
 
 
 class NftSchema(BaseModel):
-    token_id: int = Field(..., alias='tokenId')
+    token_id: int = Field(..., alias="tokenId")
     uri: str
-    public_key: str = Field(..., alias='publicKey')
+    public_key: str = Field(..., alias="publicKey")
 
 
 class GeneratedNftSchema(BaseModel):

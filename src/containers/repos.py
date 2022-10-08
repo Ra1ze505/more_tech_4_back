@@ -3,7 +3,7 @@ from dependency_injector import containers, providers
 from src.data.repos.polygon.nft import NftApiRepo
 from src.data.repos.polygon.transfer import TransferApiRepo
 from src.data.repos.polygon.wallet import WalletApiRepo
-from src.data.repos.user import UserRepo, UserAuthRepo
+from src.data.repos.user import UserAuthRepo, UserRepo
 
 
 class ReposContainer(containers.DeclarativeContainer):
@@ -35,6 +35,3 @@ class ReposContainer(containers.DeclarativeContainer):
         http_client=gateways.http_client,
         config=config.polygon,
     )
-
-
-

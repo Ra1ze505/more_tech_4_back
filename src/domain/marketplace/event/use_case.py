@@ -3,7 +3,6 @@ from src.domain.base.base_use_case import BaseUseCase
 
 
 class EventUseCase(BaseUseCase):
-
     def __init__(self, repo: EventRepo):
         self.repo = repo
 

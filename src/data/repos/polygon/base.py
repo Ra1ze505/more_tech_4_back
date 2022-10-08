@@ -8,7 +8,7 @@ transaction_hash = str
 
 class PolygonBaseRepo:
     def __init__(self, http_client: AsyncClient, config: dict):
-        self.base_url = 'https://hackathon.lsp.team/hk/v1'
+        self.base_url = "https://hackathon.lsp.team/hk/v1"
         self.http_client = http_client
         self.public_key = config["public_key"]
         self.private_key = config["private_key"]
@@ -17,8 +17,8 @@ class PolygonBaseRepo:
         response = await self.http_client.send(request)
         if response.status_code not in {status.HTTP_200_OK, status.HTTP_201_CREATED}:
             detail = response.json()
-            detail['url'] = request.url
-            detail['method'] = request.method
+            detail["url"] = request.url
+            detail["method"] = request.method
             raise PolygonException(detail)
         return response.json()
 

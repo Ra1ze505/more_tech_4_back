@@ -1,17 +1,15 @@
-
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src.containers.container import container
-from src.domain.user.dto.base import oauth2_scheme, UserCreateSchema, Token
+from src.domain.user.dto.base import Token, UserCreateSchema, oauth2_scheme
 from src.domain.user.use_cases import UserAuthUseCase, UserUseCase
 
-user_router = APIRouter(prefix='/user', tags=['user'])
+user_router = APIRouter(prefix="/user", tags=["user"])
 
 
 @user_router.get("/all")
-async def get_all(
-):
+async def get_all():
     service: UserUseCase = container.use_cases.user()
     return await service.get_all()
 
@@ -33,16 +31,12 @@ async def login_for_access_token(
 
 
 @user_router.post("/token/refresh", response_model=Token)
-async def refresh_token(
-    token: str
-):
+async def refresh_token(token: str):
     service: UserAuthUseCase = container.use_cases.user_auth()
     return await service.refresh_token(token)
 
 
 @user_router.get("/me")
-async def me(
-    token: str = Depends(oauth2_scheme)
-):
+async def me(token: str = Depends(oauth2_scheme)):
     service: UserAuthUseCase = container.use_cases.user_auth()
     return await service.get_current_user(token)

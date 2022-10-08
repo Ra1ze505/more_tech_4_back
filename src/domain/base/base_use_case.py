@@ -2,7 +2,6 @@ import abc
 
 
 class BaseUseCase(abc.ABC):
-
     @abc.abstractmethod
     async def get_all(self):
         ...

@@ -1,10 +1,10 @@
 from datetime import datetime
 
-from sqlmodel import SQLModel, Field
+from sqlmodel import Field, SQLModel
 
 
 class Achieve(SQLModel, table=True):
-    id: int = Field( primary_key=True)
+    id: int = Field(primary_key=True)
     title: str
     description: str
     created_at: datetime = Field(default=None)
