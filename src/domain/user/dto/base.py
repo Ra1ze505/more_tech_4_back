@@ -10,11 +10,12 @@ class UserBaseSchema(BaseModel):
     id: int
     username: str
     email: str
-    password: str
     position: str
     balance: int
     is_active: bool
     role: UserRole
+    private_id: str | None
+    public_id: str | None
     created_at: datetime
     updated_at: datetime
 
