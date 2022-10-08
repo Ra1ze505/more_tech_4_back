@@ -51,6 +51,7 @@ class AuthSettings(EnvBaseSettings):
     secret_key: str = "secret"
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
+    refresh_token_expire_days: int = 30
 
     class Config:
         env_prefix = "auth_"
@@ -62,6 +63,7 @@ class PolygonSettings(EnvBaseSettings):
 
     class Config:
         env_prefix = "polygon_"
+
 
 class Settings(EnvBaseSettings):
     app_name: str = "More Tech"
