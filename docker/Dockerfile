@@ -9,7 +9,6 @@ ENV GET_POETRY_IGNORE_DEPRECATION=1
 RUN apt-get -y update
 RUN apt-get -y upgrade
 
-COPY ./req.txt /code/req.txt
 
 RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=/opt/poetry python && \
     cd /usr/local/bin && \
