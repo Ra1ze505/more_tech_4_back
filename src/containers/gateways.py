@@ -1,6 +1,5 @@
 import logging
 import sys
-from typing import AsyncGenerator
 
 import loguru
 from dependency_injector import containers, providers
@@ -10,7 +9,7 @@ from typing import AsyncGenerator
 
 import httpx
 
-from src.db.db import Database
+from src.data.db.db import Database
 
 
 async def init_async_http_client(base_url: str) -> AsyncGenerator[httpx.AsyncClient, None]:

@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 class Event(SQLModel, table=True):
-    id: int = Field(default=None, primary_key=True)
+    id: int = Field( primary_key=True)
     name: str = Field(default=None)
     description: str = Field(default=None)
     start_date: date

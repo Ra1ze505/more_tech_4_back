@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.db.db import Database
+from src.data.db.db import Database
 
 
 class BaseRepo:

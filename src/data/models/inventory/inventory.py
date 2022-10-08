@@ -9,7 +9,7 @@ class CountMedalUser(SQLModel):
 
 
 class Inventory(SQLModel, table=True):
-    id: int = Field(default=None, primary_key=True)
+    id: int = Field( primary_key=True)
     user_id: int = Field(foreign_key="user.id")
     list_achieve: list[int]
     list_nft_user_item: list[int]
