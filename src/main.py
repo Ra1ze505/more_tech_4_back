@@ -4,6 +4,7 @@ from typing import Any
 from fastapi import FastAPI, Request
 from fastapi.openapi.models import Response
 from fastapi.responses import JSONResponse
+from fastapi_utils.tasks import repeat_every
 from starlette.middleware.cors import CORSMiddleware
 
 from src.api.v1.router.user import user_router
@@ -45,6 +46,13 @@ async def add_process_time_header(request: Request, call_next: Any) -> Response:
 @app.on_event("startup")
 async def startup_event() -> None:
     await app.container.init_resources()  # type: ignore
+
+
+@app.on_event("startup")
+@repeat_every(seconds=1)  # 1 hour
+async def check_transactions() -> None:
+    use_case = container.use_cases.check_status()
+    await use_case()
 
 
 @app.on_event("shutdown")
