@@ -15,8 +15,8 @@ class EventBaseSchema(BaseModel):
     repeat: bool | None = None
     is_active: bool | None = None
     creator_id: int | None = None
-    creator: User | None = None
-    users: list[User] | None = None
+    creator: int | None = None
+    users: list[int] | None = None
     base_price: int | None = None
     price: int | None = None
     created_at: datetime | None = None
