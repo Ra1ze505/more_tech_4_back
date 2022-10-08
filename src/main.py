@@ -1,8 +1,13 @@
+import asyncio
 import time
 from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.openapi.models import Response
+from fastapi.responses import JSONResponse
+from fastapi_utils.tasks import repeat_every
+from loguru import logger
+from starlette.middleware.cors import CORSMiddleware
 
 from src.api.v1.router.marketplace import marketplace_router
 from src.api.v1.router.user import user_router
@@ -15,7 +20,15 @@ def create_app() -> FastAPI:
         root_path=container.config.app.root_path(),
         debug=container.config.app.debug(),
     )
+    application.add_middleware(
+        CORSMiddleware,
+        allow_origins="*",
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
     container.gateways.logging_setup.init()  # type: ignore
+    container.gateways.http_client.init()  # type: ignore
     application.include_router(user_router, prefix="/api/v1")
     application.include_router(marketplace_router, prefix="/api/v1")
     application.container = container
@@ -38,6 +51,13 @@ async def add_process_time_header(request: Request, call_next: Any) -> Response:
 @app.on_event("startup")
 async def startup_event() -> None:
     await app.container.init_resources()  # type: ignore
+
+
+@app.on_event("startup")
+@repeat_every(seconds=3, logger=logger)
+async def check_transactions() -> None:
+    use_case = await container.use_cases.check_status()
+    await use_case()
 
 
 @app.on_event("shutdown")

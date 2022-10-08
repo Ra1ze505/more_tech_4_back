@@ -15,6 +15,12 @@ class PolygonBaseRepo:
 
     async def send(self, request: Request) -> dict:
         response = await self.http_client.send(request)
+        while (
+            response.status_code != status.HTTP_500_INTERNAL_SERVER_ERROR
+            and response.json().get("moreInformation") == "header not found"
+        ):
+            response = await self.http_client.send(request)
+
         if response.status_code not in {status.HTTP_200_OK, status.HTTP_201_CREATED}:
             detail = response.json()
             detail["url"] = request.url

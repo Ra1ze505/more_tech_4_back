@@ -21,7 +21,7 @@ class TransferApiRepo(PolygonBaseRepo):
             },
         )
         response = await self.send(request)
-        return response.get("transactionHash")
+        return response.get("transaction")
 
     async def transfer_ruble(
         self, from_private_key: str, to_public_key: str, amount: float
@@ -36,7 +36,7 @@ class TransferApiRepo(PolygonBaseRepo):
             },
         )
         response = await self.send(request)
-        return response.get("transactionHash")
+        return response.get("transaction")
 
     async def transfer_nft(
         self, from_private_key: str, to_public_key: str, token_id: int
@@ -51,7 +51,7 @@ class TransferApiRepo(PolygonBaseRepo):
             },
         )
         response = await self.send(request)
-        return response.get("transactionHash")
+        return response.get("transaction")
 
     async def transfer_status(self, transaction_hash: str) -> dict:
         # todo {"status": "Success" }

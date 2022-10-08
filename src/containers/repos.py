@@ -5,6 +5,7 @@ from src.data.repos.marketplace.event import EventRepo
 from src.data.repos.polygon.nft import NftApiRepo
 from src.data.repos.polygon.transfer import TransferApiRepo
 from src.data.repos.polygon.wallet import WalletApiRepo
+from src.data.repos.transaction import TransactionRepo
 from src.data.repos.user import UserAuthRepo, UserRepo
 
 
@@ -43,4 +44,8 @@ class ReposContainer(containers.DeclarativeContainer):
         NftApiRepo,
         http_client=gateways.http_client,
         config=config.polygon,
+    )
+    transaction_repo = providers.Factory(
+        TransactionRepo,
+        db=gateways.db,
     )

@@ -26,13 +26,13 @@ async def register(
 async def login_for_access_token(
     user: OAuth2PasswordRequestForm = Depends(),
 ):
-    service: UserAuthUseCase = container.use_cases.user_auth()
+    service: UserAuthUseCase = await container.use_cases.user_auth()
     return await service.login_for_access_token(user.username, user.password)
 
 
 @user_router.post("/token/refresh", response_model=Token)
 async def refresh_token(token: str):
-    service: UserAuthUseCase = container.use_cases.user_auth()
+    service: UserAuthUseCase = await container.use_cases.user_auth()
     return await service.refresh_token(token)
 
 
