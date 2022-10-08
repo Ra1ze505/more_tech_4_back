@@ -13,6 +13,10 @@ from src.domain.user.dto.base import UserBaseSchema, TokenData
 
 
 class BaseUserRepo(BaseRepo):
+    model = User
+    query = select(User)
+    schema = UserBaseSchema
+
 
     async def get_all(self):
         return (await self.session.execute(select(User))).scalars().all()
@@ -37,6 +41,9 @@ class UserRepo(BaseUserRepo):
 
 
 class UserAuthRepo(BaseUserRepo):
+    model = User
+    query = select(User)
+    schema = UserBaseSchema
 
     def __init__(self, db, config: dict):
         super().__init__(db)

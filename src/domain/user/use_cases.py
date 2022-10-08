@@ -18,7 +18,6 @@ class UserUseCase(BaseUseCase):
         return await self.repo.get_all()
 
 
-
 class UserAuthUseCase:
 
     def __init__(
