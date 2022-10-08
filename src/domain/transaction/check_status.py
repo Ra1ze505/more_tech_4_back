@@ -13,5 +13,5 @@ class CheckStatusUseCase:
             status = await self.transfer_repo.transfer_status(transaction.transaction_hash)
             if status.get("status") == "Success":
                 await self.transaction_repo.update(
-                    {"id": transaction.id, "transaction_status": "completed"}
+                    {"id": transaction.id, "transaction_status": "Success"}
                 )
