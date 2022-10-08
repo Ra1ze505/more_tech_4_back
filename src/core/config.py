@@ -4,13 +4,13 @@ from datetime import timedelta
 from pydantic import BaseSettings, validator
 
 dotenv.load_dotenv(
-    os.path.join(os.path.dirname(__file__), '.env')
+    os.path.join(os.path.dirname(__file__), '../../.env')
 )
 
 
 class EnvBaseSettings(BaseSettings):
     class Config:
-        env_file = ".env"
+        env_file = "../../.env"
 
 
 class PostgresConfig(EnvBaseSettings):

@@ -1,4 +1,5 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, JSON
+from sqlalchemy import Column
 
 
 class CountMedalUser(SQLModel):
@@ -13,5 +14,5 @@ class Inventory(SQLModel, table=True):
     list_achieve: list[int]
     list_nft_user_item: list[int]
     list_nft_reaction: list[int]
-    count_medal_user: CountMedalUser
+    count_medal_user: CountMedalUser = Field(sa_column=Column(JSON))
 

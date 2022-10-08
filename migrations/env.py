@@ -9,8 +9,7 @@ from sqlmodel import SQLModel
 
 from alembic import context
 
-from src.data.models.user import User
-from src.data.models.event import Event, UserEvent
+from src.data import models
 from src.containers.container import container
 
 

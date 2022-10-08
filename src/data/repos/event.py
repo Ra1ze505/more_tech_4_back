@@ -1,7 +1,8 @@
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from src.data.models.user.event import Event, UserEvent
+from src.data.models.user.event import Event
+from src.data.models.user.user_event import UserEvent
 from src.data.repos.base import BaseRepo
 
 

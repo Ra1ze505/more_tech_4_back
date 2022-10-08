@@ -28,3 +28,5 @@ class User(SQLModel, table=True):
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
     events: list["Event"] = Relationship(back_populates="users", link_model=UserEvent)
+    private_id: str
+    public_id: str
