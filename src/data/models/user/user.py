@@ -17,7 +17,7 @@ class UserRole(str, enum.Enum):
 
 class User(SQLModel, table=True):
     id: int = Field(primary_key=True)
-    username: str
+    username: str = Field(unique=True)
     email: str
     full_name: str = None
     password: str
