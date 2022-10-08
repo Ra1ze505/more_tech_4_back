@@ -11,7 +11,7 @@ class TransactionRepo(BaseRepo):
     model = Transaction
     schema = TransactionSchema
 
-    async def get_for_check_status(self):
+    async def get_for_check_status(self) -> list[TransactionSchema]:
         q = select(self.model).where(self.model.transaction_status != "Success")
         transactions = (await self.session.execute(q)).scalars().all()
         return [parse_obj_as(self.schema, t) for t in transactions]
