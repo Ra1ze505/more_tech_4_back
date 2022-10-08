@@ -16,6 +16,13 @@ def create_app() -> FastAPI:
         root_path=container.config.app.root_path(),
         debug=container.config.app.debug(),
     )
+    application.add_middleware(
+        CORSMiddleware,
+        allow_origins="*",
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
     container.gateways.logging_setup.init()  # type: ignore
     application.include_router(user_router, prefix="/api/v1")
     application.container = container
