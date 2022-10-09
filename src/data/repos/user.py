@@ -15,8 +15,7 @@ from src.domain.user.dto.base import UserBaseSchema, UserOutSchema
 class BaseUserRepo(BaseRepo):
     model = User
     query = select(User).where(User.is_active == True)
-    schema = UserBaseSchema
-    out_schema = UserOutSchema
+    schema = UserOutSchema
 
 
 class UserRepo(BaseUserRepo):

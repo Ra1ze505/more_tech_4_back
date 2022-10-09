@@ -18,7 +18,6 @@ class BaseRepo:
     model: Base
     query: Select
     schema: BaseSchema
-    out_schema: BaseSchema
 
     def __init__(self, db: Database):
         self.db = db
@@ -34,7 +33,7 @@ class BaseRepo:
     async def get_all(self):
         q = self.get_query()
         objects = (await self.session.execute(q)).scalars().all()
-        return parse_obj_as(list[self.out_schema], objects)
+        return parse_obj_as(list[self.schema], objects)
 
     async def get_one(self, field_value: Any, field_name: str = "id"):
         q = self.get_query().where(getattr(self.model, field_name) == field_value)
@@ -45,7 +44,7 @@ class BaseRepo:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"{self.model.__tablename__} object not found",
             )
-        return parse_obj_as(self.out_schema, obj)
+        return parse_obj_as(self.schema, obj)
 
     async def create(self, data: dict):
         obj = self.model(**data)

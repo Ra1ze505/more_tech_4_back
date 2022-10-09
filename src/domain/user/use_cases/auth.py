@@ -4,7 +4,7 @@ from pydantic import SecretStr
 
 from src.data.repos.user import UserAuthRepo
 from src.domain.user.dto.auth import Token
-from src.domain.user.dto.base import UserBaseSchema, UserCreateSchema
+from src.domain.user.dto.base import UserCreateSchema, UserOutSchema
 
 
 class UserAuthUseCase:
@@ -15,7 +15,7 @@ class UserAuthUseCase:
         self.user_auth_repo = user_auth_repo
         self.pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-    async def register(self, user: UserCreateSchema) -> UserBaseSchema:
+    async def register(self, user: UserCreateSchema) -> UserOutSchema:
         user.password = self.get_password_hash(user.password)
         return await self.user_auth_repo.create(data=user.dict())
 
@@ -25,7 +25,7 @@ class UserAuthUseCase:
     def get_password_hash(self, password: SecretStr) -> str:
         return self.pwd_context.hash(password.get_secret_value())
 
-    async def authenticate_user(self, username: str, password: str):
+    async def authenticate_user(self, username: str, password: str) -> UserOutSchema:
         user = await self.user_auth_repo.get_one(username, "username")
 
         if not self.verify_password(password, user.password.get_secret_value()):
@@ -49,7 +49,7 @@ class UserAuthUseCase:
             token_type="bearer",
         )
 
-    async def get_current_user(self, token: str) -> UserBaseSchema:
+    async def get_current_user(self, token: str) -> UserOutSchema:
         return await self.user_auth_repo.get_current_user(token=token)
 
     async def login_for_access_token(self, username: str, password: SecretStr):
