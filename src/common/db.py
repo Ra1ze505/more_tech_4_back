@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from contextvars import ContextVar
 from typing import Any, AsyncGenerator, Union, cast
 
+from fastapi_utils.camelcase import camel2snake
 from sqlalchemy import MetaData, Table
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
@@ -72,11 +73,6 @@ class Base:
 
     @declared_attr
     def __tablename__(cls) -> str:  # noqa
-        return camel_to_snake(cls.__name__)
+        return camel2snake(cls.__name__)
 
     __mapper_args__ = {"eager_defaults": True}
-
-
-def camel_to_snake(came_str: str) -> str:
-    name = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", came_str)
-    return re.sub("([a-z0-9])([A-Z])", r"\1_\2", name).lower()

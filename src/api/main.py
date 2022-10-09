@@ -9,7 +9,6 @@ from starlette import status
 from starlette.middleware.cors import CORSMiddleware
 
 from src.api.router import include_routers
-from src.api.v1.router.user import user_router
 from src.common.exceptions.base import BaseAppException
 from src.containers.container import container
 
