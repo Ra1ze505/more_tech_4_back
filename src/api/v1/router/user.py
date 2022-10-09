@@ -2,23 +2,18 @@ from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src.containers.container import container
-from src.domain.user.dto.base import Token, UserCreateSchema, oauth2_scheme
-from src.domain.user.use_cases import UserAuthUseCase, UserUseCase
+from src.domain.user.dto.auth import Token, oauth2_scheme
+from src.domain.user.dto.base import UserCreateSchema
+from src.domain.user.use_cases.auth import UserAuthUseCase
 
-user_router = APIRouter(prefix="/user", tags=["user"])
-
-
-@user_router.get("/all")
-async def get_all():
-    service: UserUseCase = container.use_cases.user()
-    return await service.get_all()
+user_router = APIRouter(tags=["user"])
 
 
 @user_router.post("/register")
 async def register(
     user: UserCreateSchema,
 ):
-    service: UserAuthUseCase = await container.use_cases.user_auth()
+    service: UserAuthUseCase = container.use_cases.user_auth()
     return await service.register(user)
 
 
@@ -26,13 +21,13 @@ async def register(
 async def login_for_access_token(
     user: OAuth2PasswordRequestForm = Depends(),
 ):
-    service: UserAuthUseCase = await container.use_cases.user_auth()
+    service: UserAuthUseCase = container.use_cases.user_auth()
     return await service.login_for_access_token(user.username, user.password)
 
 
 @user_router.post("/token/refresh", response_model=Token)
 async def refresh_token(token: str):
-    service: UserAuthUseCase = await container.use_cases.user_auth()
+    service: UserAuthUseCase = container.use_cases.user_auth()
     return await service.refresh_token(token)
 
 
