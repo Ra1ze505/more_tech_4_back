@@ -2,14 +2,12 @@ from datetime import datetime, timedelta
 
 from fastapi import HTTPException
 from jose import JWTError, jwt
-from pydantic import parse_obj_as
 from sqlalchemy import select
 from starlette import status
 
 from src.common.repository import BaseRepo
 from src.data.models.user.user import User
-from src.domain.user.dto.auth import TokenData
-from src.domain.user.dto.base import UserBaseSchema, UserOutSchema
+from src.domain.user.dto.base import UserOutSchema
 
 
 class BaseUserRepo(BaseRepo):
