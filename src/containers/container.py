@@ -1,9 +1,9 @@
 from dependency_injector import containers, providers
 
+from src import config
 from src.containers.gateways import Gateways
 from src.containers.repos import ReposContainer
 from src.containers.use_cases import UseCasesContainer
-from src.core import config
 
 app_config = config.Settings()
 

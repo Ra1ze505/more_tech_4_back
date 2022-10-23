@@ -2,25 +2,18 @@ from datetime import datetime, timedelta
 
 from fastapi import HTTPException
 from jose import JWTError, jwt
-from pydantic import parse_obj_as
 from sqlalchemy import select
 from starlette import status
 
-from src.data.models.user import User
-from src.data.repos.base import BaseRepo
-from src.domain.user.dto.base import TokenData, UserBaseSchema
+from src.common.repository import BaseRepo
+from src.data.models.user.user import User
+from src.domain.user.dto.base import UserOutSchema
 
 
 class BaseUserRepo(BaseRepo):
     model = User
-    query = select(User)
-    schema = UserBaseSchema
-    out_schema = UserBaseSchema
-
-    async def get_user_by_username(self, username: str) -> UserBaseSchema:
-        stmt = select(User).where(User.username == username)
-        user = (await self.session.execute(stmt)).scalars().one()
-        return parse_obj_as(UserBaseSchema, user)
+    query = select(User).where(User.is_active == True)
+    schema = UserOutSchema
 
 
 class UserRepo(BaseUserRepo):
@@ -28,28 +21,27 @@ class UserRepo(BaseUserRepo):
 
 
 class UserAuthRepo(BaseUserRepo):
-    model = User
-    query = select(User)
-    schema = UserBaseSchema
-
     def __init__(self, db, config: dict):
         super().__init__(db)
-        self.config = config
+        self.access_token_expire_minutes = config.get("access_token_expire_minutes")
+        self.refresh_token_expire_days = config.get("refresh_token_expire_days")
+        self.secret_key = config.get("secret_key")
+        self.algorithm = config.get("algorithm")
 
     def create_token(self, data: dict) -> str:
         to_encode = data.copy()
         token_type = to_encode.get("type")
         if token_type == "access":
-            expires_delta = timedelta(minutes=self.config.get("access_token_expire_minutes"))
+            expires_delta = timedelta(minutes=self.access_token_expire_minutes)
         else:
-            expires_delta = timedelta(days=self.config.get("refresh_token_expire_days"))
+            expires_delta = timedelta(days=self.refresh_token_expire_days)
 
         expire = datetime.utcnow() + expires_delta
         to_encode.update({"exp": expire})
         encoded_jwt = jwt.encode(
             to_encode,
-            self.config.get("secret_key"),
-            algorithm=self.config.get("algorithm"),
+            self.secret_key,
+            algorithm=self.algorithm,
         )
         return encoded_jwt
 
@@ -62,18 +54,17 @@ class UserAuthRepo(BaseUserRepo):
         try:
             payload = jwt.decode(
                 token,
-                self.config.get("secret_key"),
-                algorithms=[self.config.get("algorithm")],
+                self.secret_key,
+                algorithms=[self.algorithm],
             )
             username: str = payload.get("sub")
             token_type: str = payload.get("type")
             exp: datetime = payload.get("exp")
             if username is None or token_type != "access" or exp < datetime.utcnow().timestamp():
                 raise credentials_exception
-            token_data = TokenData(username=username)
         except JWTError:
             raise credentials_exception
-        user = await self.get_user_by_username(username=token_data.username)
+        user = await self.get_one(username, "username")
         if user is None:
             raise credentials_exception
         return user
@@ -87,18 +78,17 @@ class UserAuthRepo(BaseUserRepo):
         try:
             payload = jwt.decode(
                 token,
-                self.config.get("secret_key"),
-                algorithms=[self.config.get("algorithm")],
+                self.secret_key,
+                algorithms=[self.algorithm],
             )
             username: str = payload.get("sub")
             token_type: str = payload.get("type")
             exp: datetime = payload.get("exp")
             if username is None or token_type != "refresh" or exp < datetime.utcnow().timestamp():
                 raise credentials_exception
-            token_data = TokenData(username=username)
         except JWTError:
             raise credentials_exception
-        user = await self.get_user_by_username(username=token_data.username)
+        user = await self.get_one(username, "username")
         if user is None:
             raise credentials_exception
         return user

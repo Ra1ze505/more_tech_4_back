@@ -1,53 +1,41 @@
 from datetime import datetime
+from uuid import UUID
 
-from fastapi.security import OAuth2PasswordBearer
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, SecretStr, validator
 
-from src.data.models.user import UserRole
+from src.common.schema import BaseSchema, OrmSchema
+from src.data.models.user.user import UserRole
 
 
-class UserBaseSchema(BaseModel):
-    id: int
+class UserBaseSchema(BaseSchema):
+    id: UUID
     username: str
-    password: str
-    email: str
-    position: str
-    balance: int
+    email: EmailStr
+    password: SecretStr
     is_active: bool
     role: UserRole
-    private_id: str | None
-    public_id: str | None
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        orm_mode = True
+
+class UserOutSchema(UserBaseSchema, OrmSchema):
+    ...
 
 
 class UserCreateSchema(BaseModel):
     username: str
-    email: str
-    password: str
-    position: str
-    balance: int
-    is_active: bool
-    user_role: str = "user"
-    public_id: str
-    private_id: str
-    events: list = []
+    email: EmailStr
+    password: SecretStr
+    full_name: str
 
+    @validator("password")
+    def validate_password(cls, v):
+        if len(v) < 8:
+            raise ValueError("Password must be at least 8 characters.")
+        return v
 
-class Token(BaseModel):
-    access_token: str
-    refresh_token: str
-    token_type: str
-
-
-class TokenData(BaseModel):
-    username: str | None = None
-    role: UserRole | None = None
-
-
-oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl="api/v1/user/token",
-)
+    @validator("username")
+    def validate_username(cls, v):
+        if len(v) < 4:
+            raise ValueError("Username must be at least 4 characters.")
+        return v
